@@ -1,0 +1,46 @@
+extends homeBase
+
+block content
+    main
+        .layout
+            //-Start of Sign In
+            .main.order-md-1
+                .start
+                    .container
+                        .col-md-12
+                            .content
+                                h1 Sign in to HHSVD
+                                .third-party
+                                    button.btn.item.bg-blue
+                                        i.material-icons pages
+                                    button.btn.item.bg-teal
+                                        i.material-icons party_mode
+                                    button.btn.item.bg-purple
+                                        i.material-icons whatshot
+                                p or use your email account:
+                                form.form--login
+                                    .form-group
+                                        input#inputEmail.form-control(type='email', placeholder='Email Address', required='')
+                                        button.btn.icon
+                                            i.material-icons mail_outline
+                                    .form-group
+                                        input#inputPassword.form-control(type='password', placeholder='Password', required='')
+                                        button.btn.icon
+                                            i.material-icons lock_outline
+                                    button.btn.button(type='submit') Sign In
+                                    .callout
+                                        span
+                                            | Don't have account? 
+                                            a(href='/signup') Create Account
+            //-End of Sign In
+            //-Start of Sidebar
+            .aside.order-md-2
+                .container
+                    .col-md-12
+                        .preference
+                            h2 Hello, Friend!
+                            p Enter your personal details and start your journey with HHSVD today.
+                            a.btn.button(href='/signup') Sign Up
+                        //-End of Sidebar
+                        //-Layout
+                        

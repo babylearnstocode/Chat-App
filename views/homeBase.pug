@@ -1,0 +1,17 @@
+doctype html
+html(lang='en')
+    head
+        meta(charset='utf-8')
+        title=title
+        meta(name='description', content='#')
+        meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+        //-Bootstrap core CSS
+        link(href='/css/lib/bootstrap.min.css', type='text/css', rel='stylesheet')
+        link(href='/css/homeStyle.css', type='text/css', rel='stylesheet')
+        link(href='/css/swipe.min.css', type='text/css', rel='stylesheet')
+        //-Favicon
+        link(href='/img/favicon.png', type='image/png', rel='icon')
+    body.start
+        block content
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js')
+        script(src='/js/bundler.js')

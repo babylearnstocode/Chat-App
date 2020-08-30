@@ -1,0 +1,37 @@
+{
+  "name": "chatapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node socket.js",
+    "dev": "nodemon socket.js",
+    "start:prod": "NODE_ENV=production nodemon socket.js",
+    "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js/ --out-file bundler.js",
+    "build:js": "parcel build ./public/js/index.js --out-dir ./public/js/ --out-file bundler.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/polyfill": "^7.10.4",
+    "axios": "^0.20.0",
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "html-to-text": "^5.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.0",
+    "morgan": "^1.10.0",
+    "nodemailer": "^6.4.11",
+    "parcel-bundler": "^1.12.4",
+    "pug": "^3.0.0",
+    "socket.io": "^2.3.0",
+    "utils": "^0.3.1",
+    "validator": "^13.1.1"
+  },
+  "engines": {
+    "node": ">=10.0.0"
+  }
+}

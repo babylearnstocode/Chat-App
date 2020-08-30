@@ -1,0 +1,83 @@
+doctype html
+html
+    head
+        link#bootstrap-css(href='//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css', rel='stylesheet')
+        //---- Include the above in your HEAD tag --------
+        title=user.name
+        link(rel='stylesheet', href='/css/style.css')
+        link(rel='stylesheet', href='/css/homeStyle.css')
+        link(rel='stylesheet', href='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css', integrity='sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO', crossorigin='anonymous')
+        link(rel='stylesheet', href='https://use.fontawesome.com/releases/v5.5.0/css/all.css', integrity='sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU', crossorigin='anonymous')
+       
+        link(rel='stylesheet', type='text/css', href='https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css')
+         //-Favicon
+        link(href='/img/favicon.png', type='image/png', rel='icon')
+
+    body
+        .navigation
+            a.logoutBtn
+                img.avatar(src=`img/avatars/${user.photo}`)
+                .logout LOGOUT
+        .container-fluid.h-100
+            .row.justify-content-center.h-100
+                .col-md-4.col-xl-3.chat
+                    .card.mb-sm-3.mb-md-0.contacts_card
+                        .card-header
+                            .input-group
+                                input.form-control.search(type='text', placeholder='Search...', name='')
+                                .input-group-prepend
+                                    span.input-group-text.search_btn
+                                        i.fas.fa-search
+                        .card-body.contacts_body(data-current-user=`${JSON.stringify(user)}`)
+                            ui
+                            ui.contacts
+                                each conversation in conversations
+                                    -if(conversation.user1.id.toString() !== user.id)
+                                        li(id=`${conversation._id}`)
+                                            .d-flex.bd-highlight.contactCard(data-contact=`${JSON.stringify(conversation.user1)}` data-conversation=`${JSON.stringify(conversation)}`)
+                                                .img_cont
+                                                    img.rounded-circle.user_img(src=`/img/avatars/${conversation.user1.photo}`)
+                                                    span.online_icon
+                                                .user_info
+                                                    span=`${conversation.user1.name}`
+                                                    p=`${conversation.message}`
+                                    -else
+                                        li(id=`${conversation._id}`)
+                                            .d-flex.bd-highlight.contactCard(data-contact=`${JSON.stringify(conversation.user2)}` data-conversation=`${JSON.stringify(conversation)}`)
+                                                .img_cont
+                                                    img.rounded-circle.user_img(src=`/img/avatars/${conversation.user2.photo}`)
+                                                    span.online_icon
+                                                .user_info
+                                                    span=`${conversation.user2.name}`
+                                                    p=`${conversation.message}`
+                        
+                        .card-footer
+
+                .col-md-8.col-xl-6.chat
+                    .card.msg_area
+                        .card-header.msg_head
+                            .d-flex.bd-highlight
+                                .img_cont
+                                    
+                                .user_info
+                                    
+                        .card-body.msg_card_body
+                        
+                        .card-footer
+                            form.form.form--message
+                                .form__group
+                                    .input-group
+                                        .input-group-append
+                                            span.input-group-text.attach_btn
+                                                i.fas.fa-paperclip
+                                        textarea#inputMessage.form-control.type_msg(name='', placeholder='Type your message...')
+                                        .input-group-append
+                                            span.input-group-text.send_btn
+                                                button.btn
+                                                    i.fas.fa-location-arrow
+
+        
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js')
+      
+        script( src='/js/bundler.js')
+    
