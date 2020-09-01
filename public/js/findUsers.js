@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { htmlToElement } from './utils';
+import { getMessagesWith } from './getMessagesWith';
 
-export const findUsers = async (arg, contactsBody) => {
+export const findUsers = async (arg, contactsBody, msgArea) => {
   const res = await axios({
     method: 'POST',
     url: `/api/v1/users/search`,
@@ -11,10 +12,12 @@ export const findUsers = async (arg, contactsBody) => {
   });
 
   let searchResults = res.data.data.users;
+  contactsBody.firstChild.innerHTML = '';
+
   let searchTemplate = '';
   if (arg !== '') {
     searchResults.forEach((user) => {
-      searchTemplate += `<li>
+      searchTemplate = `<li>
     <div class='d-flex bd-highlight contactCard' data-contact='${JSON.stringify(
       user
     )}' )>
@@ -28,10 +31,14 @@ export const findUsers = async (arg, contactsBody) => {
         </div>
     </div>
     </li>`;
+      searchTemplate = htmlToElement(searchTemplate);
+
+      contactsBody.firstChild.insertAdjacentElement(
+        'afterbegin',
+        searchTemplate
+      );
     });
   }
-  searchTemplate = htmlToElement(`<ul> ${searchTemplate} </ul>`);
-  contactsBody.replaceChild(searchTemplate, contactsBody.firstChild);
 
   return;
 };

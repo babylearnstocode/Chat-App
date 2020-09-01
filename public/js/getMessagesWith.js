@@ -21,11 +21,35 @@ export const getMessagesWith = async (contact, msgArea) => {
 
 </div>`;
 
+  let footer = `<div class="card-footer">
+                  <form class="form form--message" data-contact-Id='${contact._id}'>
+                    <div class="form__group">
+                      <div class="input-group">
+                        <div class="input-group-append">
+                          <span class="input-group-text attach_btn">
+                            <i class="fas fa-paperclip"></i>
+                          </span>
+                        </div>
+                      <textarea class="form-control type_msg" id="inputMessage" name="" placeholder="Type your message..."></textarea>
+                      <div class="input-group-append">
+                          <span class="input-group-text send_btn">
+                            <button class="btn">
+                              <i class="fas fa-location-arrow"></i>
+                            </button>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>`;
+
   let body;
   msgArea.childNodes[1].innerHTML = '';
 
   head = htmlToElement(head);
   msgArea.replaceChild(head, msgArea.childNodes[0]);
+  footer = htmlToElement(footer);
+  msgArea.replaceChild(footer, msgArea.childNodes[2]);
 
   res.data.data.forEach((msg) => {
     if (msg.sender._id === contact._id) {

@@ -12,22 +12,25 @@ const loginForm = document.querySelector('.form--login');
 const signupForm = document.querySelector('.form--signup');
 const contactCards = document.getElementsByClassName('contactCard');
 const messageArea = document.querySelector('.msg_area');
-const messageForm = document.querySelector('.form--message');
-const messageInput = document.getElementById('inputMessage');
+
 const conversationsArea = document.querySelector('.contacts');
 const logoutButton = document.querySelector('.logoutBtn');
 const searchInput = document.querySelector('.search');
 const contactsBody = document.querySelector('.contacts_body');
 
 //Delication
-let conversation;
-let contactData;
 let currentUser;
 if (contactsBody) {
   currentUser = JSON.parse(contactsBody.dataset.currentUser);
   setInterval(async () => {
-    await getAllConversations(conversationsArea, currentUser);
-    contactsRender();
+    const conversations = await getAllConversations(
+      conversationsArea,
+      messageArea
+    );
+    contactsEvent();
+
+    //Join new logged user to every rooms
+    socket.emit('join', conversations);
   }, 2000);
 }
 if (loginForm) {
@@ -54,17 +57,49 @@ if (logoutButton) {
   logoutButton.addEventListener('click', logout);
 }
 
-const contactsRender = () => {
+const contactsEvent = () => {
   if (contactCards) {
     const contactCardsArray = [...contactCards];
     contactCardsArray.forEach((card) => {
       card.addEventListener('click', async () => {
-        if (card.dataset.conversation) {
-          conversation = JSON.parse(card.dataset.conversation);
-        }
-        contactData = JSON.parse(card.dataset.contact);
+        let contactData = JSON.parse(card.dataset.contact);
 
         await getMessagesWith(contactData, messageArea);
+
+        const messageForm = document.querySelector('.form--message');
+        const messageInput = document.getElementById('inputMessage');
+        if (messageForm && messageInput) {
+          const contactId = messageForm.dataset.contactId;
+
+          messageForm.addEventListener('submit', async (e) => {
+            if (messageInput.value !== '') {
+              e.preventDefault();
+              const resMessage = await sendMessageTo(
+                messageInput.value,
+                contactId
+              );
+              const conversation = resMessage.data.data.returnedConversation;
+              const msg = resMessage.data.data.newMessage;
+              socket.emit('chat message from client', conversation, msg);
+              messageInput.value = '';
+            }
+          });
+          messageInput.addEventListener('keydown', async (e) => {
+            if (e.key === 'Enter' && messageInput.value !== '') {
+              e.preventDefault();
+
+              const resMessage = await sendMessageTo(
+                messageInput.value,
+                contactId
+              );
+              const conversation = resMessage.data.data.returnedConversation;
+              const msg = resMessage.data.data.newMessage;
+
+              socket.emit('chat message from client', conversation, msg);
+              messageInput.value = '';
+            }
+          });
+        }
       });
     });
   }
@@ -72,44 +107,24 @@ const contactsRender = () => {
 
 if (searchInput) {
   searchInput.addEventListener('keyup', async (e) => {
-    await findUsers(e.target.value, contactsBody);
-    contactsRender();
+    await findUsers(e.target.value, contactsBody, messageArea);
+    contactsEvent();
   });
 }
-
-contactsRender();
 
 //Socket io events
 
 //Send messages to server
-if (messageForm && messageInput) {
-  messageForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    socket.emit('chat message from client', conversation, messageInput.value);
-    messageInput.value = '';
-  });
 
-  messageInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      socket.emit('chat message from client', conversation, messageInput.value);
-      messageInput.value = '';
-    }
-  });
-}
 window.addEventListener('beforeunload', () => {
   socket.close();
 });
 
 //Receiver and handler socket from server
-if (conversationsArea) {
-  socket.on('chat message from server', async (msg) => {
-    const resMessage = await sendMessageTo(msg, contactData);
-    await getAllConversations(conversationsArea, currentUser);
-    const message = resMessage.data.data;
-
+if (conversationsArea && messageArea) {
+  socket.on('chat message from server', async (message) => {
     let body;
-    if (message.sender === contactData._id) {
+    if (message.sender._id !== currentUser._id) {
       body = ` <div class="d-flex justify-content-start mb-4">
           <div class="img_cont_msg">
             <img class="rounded-circle user_img_msg" src="/img/avatars/${message.sender.photo}" alt="" />
@@ -131,8 +146,7 @@ if (conversationsArea) {
     </div>`;
     }
 
-    contactsRender();
-
     messageArea.childNodes[1].insertAdjacentHTML('beforeend', body);
+    await getAllConversations(conversationsArea, currentUser);
   });
 }

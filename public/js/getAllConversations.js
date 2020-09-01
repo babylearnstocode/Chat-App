@@ -1,23 +1,24 @@
 import axios from 'axios';
 import { htmlToElement } from './utils';
+import { getMessagesWith } from './getMessagesWith';
 
-export const getAllConversations = async (conversationsArea, currentUser) => {
+export const getAllConversations = async (conversationsArea, msgArea) => {
   const res = await axios({
     method: 'GET',
     url: `/api/v1/messages/conversations`
   });
 
   let side, contactData;
-  const conversations = res.data.data;
+  const { conversations, user } = res.data.data;
 
   conversationsArea.innerHTML = '';
   conversations.forEach((conversation) => {
-    if (conversation.user1._id === currentUser._id) {
+    if (conversation.user1._id === user) {
       contactData = conversation.user2;
     } else {
       contactData = conversation.user1;
     }
-    side = ` <li id=${conversation._id}>
+    side = ` <li>
       <div class='d-flex bd-highlight contactCard' data-contact='${JSON.stringify(
         contactData
       )}' data-conversation='${JSON.stringify(conversation)}')>
@@ -34,8 +35,12 @@ export const getAllConversations = async (conversationsArea, currentUser) => {
           </div>
       </div>
       </li>`;
-    conversationsArea.insertAdjacentHTML('beforeend', side);
+
+    side = htmlToElement(side);
+    // console.log(contactData);
+
+    conversationsArea.insertAdjacentElement('beforeend', side);
   });
 
-  return res;
+  return conversations;
 };

@@ -11,8 +11,11 @@ io.on('connection', (socket) => {
   });
 
   socket.on('chat message from client', (room, msg) => {
-    socket.join(room);
     io.to(room).emit('chat message from server', msg);
+  });
+
+  socket.on('join', (conversations) => {
+    conversations.forEach((conversation) => socket.join(conversation));
   });
 
   socket.on('new user connected', (receiver) => {

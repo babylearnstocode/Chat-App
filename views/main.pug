@@ -29,7 +29,7 @@ html
                                     span.input-group-text.search_btn
                                         i.fas.fa-search
                         .card-body.contacts_body(data-current-user=`${JSON.stringify(user)}`)
-                            ui
+                            ul
                             ui.contacts
                                 each conversation in conversations
                                     -if(conversation.user1.id.toString() !== user.id)
@@ -64,19 +64,7 @@ html
                         .card-body.msg_card_body
                         
                         .card-footer
-                            form.form.form--message
-                                .form__group
-                                    .input-group
-                                        .input-group-append
-                                            span.input-group-text.attach_btn
-                                                i.fas.fa-paperclip
-                                        textarea#inputMessage.form-control.type_msg(name='', placeholder='Type your message...')
-                                        .input-group-append
-                                            span.input-group-text.send_btn
-                                                button.btn
-                                                    i.fas.fa-location-arrow
 
-        
         script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js')
       
         script( src='/js/bundler.js')

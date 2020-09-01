@@ -91,28 +91,25 @@ exports.createMessageWith = catchAsync(async (req, res, next) => {
     user2: sender
   });
 
-  let newConversation;
+  let returnedConversation;
   if (conversation1) {
-    await Conversation.updateOne(
+    returnedConversation = await Conversation.findOneAndUpdate(
       { _id: conversation1.id },
       {
-        $set: {
-          message: newMessage.message
-        }
-      }
+        message: newMessage.message
+      },
+      { new: true }
     );
   } else if (conversation2) {
-    await Conversation.updateOne(
+    returnedConversation = await Conversation.findOneAndUpdate(
       { _id: conversation2.id },
       {
-        $set: {
-          message: newMessage.message
-        }
-      }
+        message: newMessage.message
+      },
+      { new: true }
     );
   } else {
-    newConversation = true;
-    await Conversation.create({
+    returnedConversation = await Conversation.create({
       message: newMessage.message,
       user1: sender,
       user2: sendTo
@@ -121,7 +118,7 @@ exports.createMessageWith = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: 'success',
-    data: newMessage
+    data: { newMessage, returnedConversation }
   });
 });
 
@@ -134,6 +131,6 @@ exports.getAllConversations = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     results: conversations.length,
-    data: conversations
+    data: { conversations, user }
   });
 });
