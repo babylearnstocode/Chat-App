@@ -20,6 +20,8 @@ const contactsBody = document.querySelector('.contacts_body');
 
 //Delication
 let currentUser;
+let contactUser;
+
 if (contactsBody) {
   currentUser = JSON.parse(contactsBody.dataset.currentUser);
   setInterval(async () => {
@@ -63,6 +65,7 @@ const contactsEvent = () => {
     contactCardsArray.forEach((card) => {
       card.addEventListener('click', async () => {
         let contactData = JSON.parse(card.dataset.contact);
+        contactUser = contactData;
 
         await getMessagesWith(contactData, messageArea);
 
@@ -104,6 +107,7 @@ const contactsEvent = () => {
     });
   }
 };
+contactsEvent();
 
 if (searchInput) {
   searchInput.addEventListener('keyup', async (e) => {
@@ -124,8 +128,13 @@ window.addEventListener('beforeunload', () => {
 if (conversationsArea && messageArea) {
   socket.on('chat message from server', async (message) => {
     let body;
-    if (message.sender._id !== currentUser._id) {
-      body = ` <div class="d-flex justify-content-start mb-4">
+
+    if (
+      message.sendTo._id === contactUser._id ||
+      message.sender._id === contactUser._id
+    ) {
+      if (message.sender._id !== currentUser._id) {
+        body = ` <div class="d-flex justify-content-start mb-4">
           <div class="img_cont_msg">
             <img class="rounded-circle user_img_msg" src="/img/avatars/${message.sender.photo}" alt="" />
             </div>
@@ -134,8 +143,8 @@ if (conversationsArea && messageArea) {
               <span class="msg_time"> </span>
           </div>
         </div>`;
-    } else {
-      body = ` <div class="d-flex justify-content-end mb-4">
+      } else {
+        body = ` <div class="d-flex justify-content-end mb-4">
       <div class="msg_container_send">
         ${message.message}
         <span class="msg_time_send"></span>
@@ -144,9 +153,10 @@ if (conversationsArea && messageArea) {
         <img class="rounded-circle user_img_msg" src="/img/avatars/${message.sender.photo}" alt="" />
       </div>
     </div>`;
-    }
+      }
 
-    messageArea.childNodes[1].insertAdjacentHTML('beforeend', body);
-    await getAllConversations(conversationsArea, currentUser);
+      messageArea.childNodes[1].insertAdjacentHTML('beforeend', body);
+      await getAllConversations(conversationsArea, currentUser);
+    }
   });
 }

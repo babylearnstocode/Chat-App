@@ -11,6 +11,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('chat message from client', (room, msg) => {
+    // socket.join(room);
     io.to(room).emit('chat message from server', msg);
   });
 
